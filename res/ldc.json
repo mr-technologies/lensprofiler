@@ -1,0 +1,9 @@
+{
+  "target squares rows": 7,
+  "target squares columns": 10,
+  "target searching timeout": 10,
+  "max image processing resolution": 1024,
+  "label font": "Arial",
+  "label font size": 26,
+  "optimize center distortion": 0
+}
