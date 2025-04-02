@@ -211,7 +211,7 @@ int main()
                 },
                 &export_callbacks[i]);
         iff_set_callback(chain_handle, "writer/frame_written_callback", written_handler, nullptr);
-        iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "on"}}}}.dump().c_str(), [](const char* , void*){}, nullptr);
+        iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "on"}}}}.dump().c_str(), [](const char*, void*){}, nullptr);
     }
 
     const std::string window_name = "IFF SDK Lens Profiler";
@@ -308,7 +308,7 @@ int main()
                 iff_log(IFF_LOG_LEVEL_INFO, "lensprofiler", "Backspace key was pressed, disabling acquisition");
                 for(const auto chain_handle : chain_handles)
                 {
-                    iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "off"}}}}.dump().c_str(), [](const char* , void*){}, nullptr);
+                    iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "off"}}}}.dump().c_str(), [](const char*, void*){}, nullptr);
                 }
             }
             else if((keycode & 0xff) == 13)
@@ -316,7 +316,7 @@ int main()
                 iff_log(IFF_LOG_LEVEL_INFO, "lensprofiler", "Enter key was pressed, enabling acquisition");
                 for(const auto chain_handle : chain_handles)
                 {
-                    iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "on"}}}}.dump().c_str(), [](const char* , void*){}, nullptr);
+                    iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "on"}}}}.dump().c_str(), [](const char*, void*){}, nullptr);
                 }
             }
             else if((keycode & 0xff) == 32)
@@ -362,7 +362,7 @@ int main()
                     const auto ldc_output_dir = iso8601_timestamp();
                     written_ptr.reset(new written_promise);
                     iff_execute(chain_handle, nlohmann::json{{"writer", {{"command", "on"}, {"args", {{"frames_count", 1}, {"subdirectory", ldc_output_dir}}}}}}.dump().c_str(),
-                                [](const char* , void*){}, nullptr);
+                                [](const char*, void*){}, nullptr);
                     const auto written = written_ptr->get_future().get();
                     written_ptr.reset();
                     if(written)
