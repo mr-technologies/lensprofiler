@@ -49,14 +49,6 @@ const std::string PYTHON3_EXEC = "python3";
 
 namespace
 {
-    using written_promise = std::promise<bool>;
-    std::unique_ptr<written_promise> written_ptr;
-    void written_handler(const char* const callback_data, void*)
-    {
-        const auto j = nlohmann::json::parse(callback_data);
-        written_ptr->set_value(j["success"].get<bool>());
-    }
-
     std::string iso8601_timestamp()
     {
         const auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -150,6 +142,8 @@ int main()
     std::condition_variable render_cond;
     std::mutex render_mutex;
     bool render_requested = false;
+    using written_promise = std::promise<bool>;
+    std::unique_ptr<written_promise> written_ptr;
     for(size_t i = 0; i < total_chains; ++i)
     {
         for(int j = 0; j < 3; ++j) //one buffer currently rendering, one buffer already filled, one buffer currently filling
@@ -210,7 +204,14 @@ int main()
                     (*export_function)(data, size, metadata);
                 },
                 &export_callbacks[i]);
-        iff_set_callback(chain_handle, "writer/frame_written_callback", written_handler, nullptr);
+        iff_set_callback(chain_handle, "writer/frame_written_callback",
+                [](const char* const callback_data, void* private_data)
+                {
+                    auto& written = *reinterpret_cast<std::unique_ptr<written_promise>*>(private_data);
+                    const auto j = nlohmann::json::parse(callback_data);
+                    written->set_value(j["success"].get<bool>());
+                },
+                &written_ptr);
         iff_execute(chain_handle, nlohmann::json{{"exporter", {{"command", "on"}}}}.dump().c_str(), [](const char*, void*){}, nullptr);
     }
 
