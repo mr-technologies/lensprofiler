@@ -3,8 +3,6 @@ pushd "${PSScriptRoot}"
 $failed=$true
 try
 {
-	mkdir tmp
-
 	"Installing Python modules..."
 	python -m pip install --upgrade pip
 	pip install --upgrade Pillow
